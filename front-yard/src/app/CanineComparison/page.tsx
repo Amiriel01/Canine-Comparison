@@ -8,12 +8,23 @@ const traitNames = ["shedding", "protectiveness", "trainability", "energy", "bar
 
 const values = [1, 2, 3, 4, 5];
 
+interface Dog {
+    name: string;
+    image_link: string;
+    shedding?: number;
+    protectiveness?: number;
+    trainability?: number;
+    energy?: number;
+    barking?: number;
+}
+
 export default function CanineComparison() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<Dog[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [selectedTrait, setSelectedTrait] = useState<string>("");
     const [selectedValue, setSelectedValue] = useState<number | string>("");
+    const [searchAttempted, setSearchAttempted] = useState<boolean>(false);
 
     const fetchData = async () => {
         if (selectedTrait && selectedValue) {
@@ -34,7 +45,7 @@ export default function CanineComparison() {
             setError('Please Select A Trait & Value');
         }
     };
-console.log("data", data)
+    
     const handleAttributeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedTrait(e.target.value);
     };
@@ -46,6 +57,7 @@ console.log("data", data)
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         fetchData();
+        setSearchAttempted(true);
     };
 
     const capitalizeFirstLetter = (string: string) => {
@@ -57,13 +69,13 @@ console.log("data", data)
         <div className='comparison-page-container'>
             <div className='comparison-info-container'>
                 <h1 className='comparison-form-title'>
-                    Canine Comparison
+                    Dog Breed Comparison
                 </h1>
                 <h2 className='comparison-form-sub-title-brown'>
                     Select a trait, then select a value.
                 </h2>
                 <h2 className='comparison-form-sub-title-blue'>
-                    Values range from 1-5, 1 is the lowest and 5 is the highest.
+                    Values range from 1-5, 1 is the lowest/hardest and 5 is the highest/easiest.
                 </h2>
                 <form onSubmit={handleSubmit} className='comparison-form'>
                     <div>
@@ -91,7 +103,33 @@ console.log("data", data)
 
                 {loading && <p className='comparison-loading'>Loading...</p>}
                 {error && <p className='comparison-error'>{error}</p>}
-                {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+                {!loading && !error && searchAttempted && data.length === 0 && (
+                    <p className='comparison-error'>No Results Found, Please Try A Different Search</p>
+                )}
+                {data.length > 0 && (
+                    <div className='cards-container'>
+                        {data.length > 0 && (
+                            <div className='cards-container'>
+                                {data.map((dog: Dog) => (
+                                    <div key={dog.name} className='card'>
+                                        <img src={dog.image_link} alt={dog.name} className='card-image' />
+                                        <div className='card-body'>
+                                            <h3>{dog.name}</h3>
+                                            <p>{capitalizeFirstLetter(selectedTrait)}: {dog[selectedTrait as keyof Dog]}</p>
+                                        </div>
+                                        <div className='card-footer'>
+                                            <label>
+                                                <input type="checkbox" className='compare-checkbox' />
+                                                Compare
+                                            </label>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {/* {data && <pre>{JSON.stringify(data, null, 2)}</pre>} */}
             </div>
         </div>
     );

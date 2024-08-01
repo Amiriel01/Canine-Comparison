@@ -16,6 +16,7 @@ interface Dog {
     trainability?: number;
     energy?: number;
     barking?: number;
+    selected?: boolean;
 }
 
 export default function CanineComparison() {
@@ -25,6 +26,9 @@ export default function CanineComparison() {
     const [selectedTrait, setSelectedTrait] = useState<string>("");
     const [selectedValue, setSelectedValue] = useState<number | string>("");
     const [searchAttempted, setSearchAttempted] = useState<boolean>(false);
+
+    const selectedDogs = data.filter(dog => dog.selected);
+    console.log(selectedDogs)
 
     const fetchData = async () => {
         if (selectedTrait && selectedValue) {
@@ -64,6 +68,13 @@ export default function CanineComparison() {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
+    const handleCheckboxChange = (name: string) => {
+        setData(prevData =>
+            prevData.map(dog =>
+                dog.name === name ? { ...dog, selected: !dog.selected } : dog
+            )
+        );
+    };
 
     return (
         <div className='comparison-page-container'>
@@ -118,8 +129,13 @@ export default function CanineComparison() {
                                             <p>{capitalizeFirstLetter(selectedTrait)}: {dog[selectedTrait as keyof Dog]}</p>
                                         </div>
                                         <div className='card-footer'>
-                                            <label>
-                                                <input type="checkbox" className='compare-checkbox' />
+                                        <label>
+                                                <input
+                                                    type="checkbox"
+                                                    className='compare-checkbox'
+                                                    checked={dog.selected || false}
+                                                    onChange={() => handleCheckboxChange(dog.name)}
+                                                />
                                                 Compare
                                             </label>
                                         </div>
@@ -129,7 +145,11 @@ export default function CanineComparison() {
                         )}
                     </div>
                 )}
+                 {/* <button onClick={handleCompare} className='compare-button'>Compare</button> */}
                 {/* {data && <pre>{JSON.stringify(data, null, 2)}</pre>} */}
+                {/* {selectedDogs.length > 0 && (
+                    <ComparisonList selectedDogs={selectedDogs} />
+                )} */}
             </div>
         </div>
     );

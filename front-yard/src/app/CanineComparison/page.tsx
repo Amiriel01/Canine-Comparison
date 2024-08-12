@@ -292,10 +292,11 @@ const CanineComparison = () => {
                     </div>
                 </form>
                 <h3 className='comparison-form-sub-title-blue'>
-                  Click compare after making your comparison selections to be routed to the comparison page. <button onClick={handleCompare} className='comparison-button'>Compare</button>
-                    {/* {selectedDogs.length > 0 && (
+                  Click compare after making your comparison selections to be routed to the comparison page. 
+                  {/* <button onClick={handleCompare} className='comparison-button'>Compare</button> */}
+                    {selectedDogs.length > 0 && (
                     <button onClick={handleCompare} className='comparison-button'>Compare</button>
-                )} */}
+                )}
                 </h3>
                 {loading && <p className='comparison-loading'>Loading...</p>}
                 {error && <p className='comparison-error'>{error}</p>}
